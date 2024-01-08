@@ -1,0 +1,29 @@
+{
+	"PercentageTier0": 0.3,
+	"PercentageTier1": 0.3,
+	"PercentageTier2": 0.4,
+	"PercentageBiomeArid": 0.4,
+	"PercentageBiomeTemperate": 0.15,
+	"PercentageBiomeTundra": 0.15,
+	"PercentageBiomeArctic": 0.3,
+	"MainRoads": true,
+	"SideRoads": true,
+	"Trails": true,
+	"Rivers": true,
+	"Powerlines": true,
+	"AboveGroundRails": true,
+	"BelowGroundRails": true,
+	"UnderwaterLabs": false,
+	"PrefabBlacklist": [
+            "mining_quarry_",
+            "swamp_",
+            "water_well",
+            "iceberg",
+            "ice_sheets",
+            "cave_",
+            "stables_a",
+            "mountain_",
+            "swamp-trees"
+        ],
+	"PrefabWhitelist": []
+}
