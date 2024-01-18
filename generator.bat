@@ -1,13 +1,17 @@
 @echo off
 REM
+REM  Source Code: 
 REM  rcon binary source: https://github.com/gorcon/rcon-cli
 REM  rcon binary version: v.0.10.3
 REM
 REM  steamcmd binary source: https://developer.valvesoftware.com/wiki/SteamCMD#Windows
+REM
+REM  
 
 for /f "tokens=1-8 delims=.:/ " %%a in ("%date% %time%") do set DateNtime=%%a-%%b-%%c_%%d-%%e
 SET CURRENTDIR=%cd%
 SET LOGFILE=%CURRENTDIR%\LogFile_%DateNtime%.log
+SET LOGFILE2=%CURRENTDIR%\LogFile2_%DateNtime%.log
 
 rmdir /S /Q "%CURRENTDIR%\server"
 mkdir "%CURRENTDIR%\MAPAS"
@@ -21,11 +25,11 @@ copy /Y "%CURRENTDIR%\myConfig.txt" "%CURRENTDIR%\server\server\server\world_%nu
 
 
 cd "%CURRENTDIR%\server\server"
-start /B /D "%CURRENTDIR%\server\server" RustDedicated.exe -batchmode +server.seed %numero% +server.worldsize 4000 +world.configfile myConfig.txt +server.port 28015 +server.maxplayers 10 +server.hostname GENERATOR +server.description GENERATOR +server.identity world_%numero% +rcon.port 28016 +rcon.password 1 +rcon.web 1 +rcon.ip 0.0.0.0
+start /B /D "%CURRENTDIR%\server\server" RustDedicated.exe -batchmode +server.seed %numero% +server.worldsize 4000 +world.configfile myConfig.txt +server.port 28015 +server.maxplayers 10 +server.hostname GENERATOR +server.description GENERATOR +server.identity world_%numero% +rcon.port 28016 +rcon.password 1 +rcon.web 1 +rcon.ip 0.0.0.0 -logfile "%CURRENTDIR%\%LOGFILE2%" 2^>nul
 
 
 :pararserver
-"%CURRENTDIR%\rcon.exe" -a 127.0.0.1:28016 -t web -p 1 status
+"%CURRENTDIR%\rcon.exe" -a 127.0.0.1:28016 -t web -p 1 status 2>nul
 IF %ERRORLEVEL% EQU 0 (
 echo [INFO][%DATE% - %TIME%] RCON IS ALIVE >> %LOGFILE%
 IF EXIST server\world_%numero%\*.map (
@@ -33,16 +37,18 @@ IF EXIST server\world_%numero%\*.map (
     copy /Y server\world_%numero%\*.map "%CURRENTDIR%\MAPAS\"
     timeout /t 20 /nobreak >nul
 )
-
 "%CURRENTDIR%\rcon.exe" -a 127.0.0.1:28016 -t web -p 1 quit
-timeout /t 120 /nobreak >nul
+timeout /t 5 /nobreak >nul
 cd "%CURRENTDIR%"
 rmdir /S /Q "%CURRENTDIR%\server"
-echo "Proceso terminado..."
+del "%CURRENTDIR%\%LOGFILE%"
+del "%CURRENTDIR%\%LOGFILE2%"
 goto fin2
 ) ELSE (
 echo [INFO][%DATE% - %TIME%] RCON IS NOT ALIVE >> %LOGFILE%
-timeout /t 120 /nobreak >nul
+echo [INFO][%DATE% - %TIME%] GENERATING MAP...PLEASE WAIT
+timeout /t 1 /nobreak >nul
+cls
 goto pararserver
 )
 
