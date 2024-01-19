@@ -56,10 +56,11 @@ goto MENU
 :GENERATEMAP
 cls
 "%CURRENTDIR%\server\steamcmd.exe" +login anonymous +force_install_dir "%CURRENTDIR%\server\server" +app_update 258550 +quit
-mkdir "%CURRENTDIR%\server\server\server\world_%randomseed%"
-copy /Y "%CURRENTDIR%\myConfig.txt" "%CURRENTDIR%\server\server\server\world_%randomseed%\"
+mkdir "%CURRENTDIR%\server\server\server\world_%RANDOMSEED%"
+copy /Y "%CURRENTDIR%\myConfig.txt" "%CURRENTDIR%\server\server\server\world_%RANDOMSEED%\"
 cd "%CURRENTDIR%\server\server"
-start /B /D "%CURRENTDIR%\server\server" RustDedicated.exe -batchmode +server.seed %randomseed% +server.worldsize %MAPSIZE% +world.configfile myConfig.txt +server.port 28015 +server.maxplayers 10 +server.hostname GENERATOR +server.description GENERATOR +server.identity world_%randomseed% +rcon.port 28016 +rcon.password 1 +rcon.web 1 +rcon.ip 0.0.0.0 -logfile "%LOGFILE2%" 2^>nul
+start /B /D "%CURRENTDIR%\server\server" RustDedicated.exe -batchmode +server.seed %RANDOMSEED% +server.worldsize %MAPSIZE% +world.configfile myConfig.txt +server.port 28015 +server.maxplayers 10 +server.hostname GENERATOR +server.description GENERATOR +server.identity world_%randomseed% +rcon.port 28016 +rcon.password 1 +rcon.web 1 +rcon.ip 0.0.0.0 -logfile "%LOGFILE2%" 2^>nul
+
 :STOPSERVER
 "%CURRENTDIR%\rcon.exe" -a 127.0.0.1:28016 -t web -p 1 status 2>nul
 IF %ERRORLEVEL% EQU 0 (
