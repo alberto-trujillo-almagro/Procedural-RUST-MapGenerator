@@ -7,51 +7,108 @@ REM
 REM  steamcmd binary source: https://developer.valvesoftware.com/wiki/SteamCMD#Windows
 REM
 REM  
+cls
 
+REM Global variables
+SET MAPSIZE=4000
+SET RANDOMSEED=%random%
 for /f "tokens=1-8 delims=.:/ " %%a in ("%date% %time%") do set DateNtime=%%a-%%b-%%c_%%d-%%e
 SET CURRENTDIR=%cd%
 SET LOGFILE=%CURRENTDIR%\LogFile_%DateNtime%.log
 SET LOGFILE2=%CURRENTDIR%\LogFile2_%DateNtime%.log
+@rmdir /S /Q "%CURRENTDIR%\server" >nul
 
-rmdir /S /Q "%CURRENTDIR%\server"
-mkdir "%CURRENTDIR%\MAPAS"
-mkdir "%CURRENTDIR%\server"
-copy /Y "%CURRENTDIR%\steamcmd.exe" "%CURRENTDIR%\server\"
+IF NOT exist "%CURRENTDIR%\MAPS" ( @mkdir "%CURRENTDIR%\MAPS" >nul )
+IF NOT exist "%CURRENTDIR%\server" ( @mkdir "%CURRENTDIR%\server" >nul )
+@copy /Y "%CURRENTDIR%\steamcmd.exe" "%CURRENTDIR%\server\" >nul
+REM End Global variables
+
+:MENU
+cls
+echo.
+echo.
+echo.
+echo                                   ********************************************************
+echo                                   *         RUST PROCEDURAL MAP GENERATOR v1.0           *
+echo                                   ********************************************************
+echo                                   *   1. Select Map Size                                 *
+echo                                   *   2. Generate Map!                                   *
+echo                                   *   3. View Map Prefabs and config                     *
+echo                                   *   4. View Maps generated                             *
+echo                                   *   5. Exit                                            *
+echo                                   ********************************************************
+echo.                                           [MapSize: %MAPSIZE% - WorldSeed: %RANDOMSEED%]
+echo.
+CHOICE /C 12345 /N /M "Select Option (1,2,3,4,5):"
+echo.
+IF ERRORLEVEL ==5 GOTO END
+IF ERRORLEVEL ==4 GOTO VIEWMAPS
+IF ERRORLEVEL ==3 GOTO VIEWCONFIG
+IF ERRORLEVEL ==2 GOTO GENERATEMAP
+IF ERRORLEVEL ==1 GOTO MAPSIZE
+goto END
+
+:MAPSIZE
+set /P MAPSIZE=Input MapSize [1500-6000]:
+cls
+goto MENU
+
+:GENERATEMAP
+cls
 "%CURRENTDIR%\server\steamcmd.exe" +login anonymous +force_install_dir "%CURRENTDIR%\server\server" +app_update 258550 +quit
-
-set numero=%random%
-mkdir "%CURRENTDIR%\server\server\server\world_%numero%"
-copy /Y "%CURRENTDIR%\myConfig.txt" "%CURRENTDIR%\server\server\server\world_%numero%\"
-
-
+mkdir "%CURRENTDIR%\server\server\server\world_%randomseed%"
+copy /Y "%CURRENTDIR%\myConfig.txt" "%CURRENTDIR%\server\server\server\world_%randomseed%\"
 cd "%CURRENTDIR%\server\server"
-start /B /D "%CURRENTDIR%\server\server" RustDedicated.exe -batchmode +server.seed %numero% +server.worldsize 4000 +world.configfile myConfig.txt +server.port 28015 +server.maxplayers 10 +server.hostname GENERATOR +server.description GENERATOR +server.identity world_%numero% +rcon.port 28016 +rcon.password 1 +rcon.web 1 +rcon.ip 0.0.0.0 -logfile "%CURRENTDIR%\%LOGFILE2%" 2^>nul
-
-
-:pararserver
+start /B /D "%CURRENTDIR%\server\server" RustDedicated.exe -batchmode +server.seed %randomseed% +server.worldsize %MAPSIZE% +world.configfile myConfig.txt +server.port 28015 +server.maxplayers 10 +server.hostname GENERATOR +server.description GENERATOR +server.identity world_%randomseed% +rcon.port 28016 +rcon.password 1 +rcon.web 1 +rcon.ip 0.0.0.0 -logfile "%LOGFILE2%" 2^>nul
+:STOPSERVER
 "%CURRENTDIR%\rcon.exe" -a 127.0.0.1:28016 -t web -p 1 status 2>nul
 IF %ERRORLEVEL% EQU 0 (
 echo [INFO][%DATE% - %TIME%] RCON IS ALIVE >> %LOGFILE%
-IF EXIST server\world_%numero%\*.map (
-    dir server\world_%numero%\*.map
-    copy /Y server\world_%numero%\*.map "%CURRENTDIR%\MAPAS\"
+IF EXIST server\world_%RANDOMSEED%\*.map (
+    dir server\world_%RANDOMSEED%\*.map
+    copy /Y server\world_%RANDOMSEED%\*.map "%CURRENTDIR%\MAPS\"
     timeout /t 20 /nobreak >nul
 )
 "%CURRENTDIR%\rcon.exe" -a 127.0.0.1:28016 -t web -p 1 quit
-timeout /t 5 /nobreak >nul
+timeout /t 30 /nobreak >nul
 cd "%CURRENTDIR%"
 rmdir /S /Q "%CURRENTDIR%\server"
 del "%CURRENTDIR%\%LOGFILE%"
 del "%CURRENTDIR%\%LOGFILE2%"
-goto fin2
+goto MENU
 ) ELSE (
 echo [INFO][%DATE% - %TIME%] RCON IS NOT ALIVE >> %LOGFILE%
 echo [INFO][%DATE% - %TIME%] GENERATING MAP...PLEASE WAIT
-timeout /t 1 /nobreak >nul
+timeout /t 2 /nobreak >nul
 cls
-goto pararserver
+goto STOPSERVER
 )
 
-:fin2
-exit 0
 
+goto END
+
+:VIEWCONFIG
+cls
+echo.
+echo *************************************** myConfig.txt **********************************
+type %CURRENTDIR%\myConfig.txt
+echo *************************************** myConfig.txt **********************************
+pause
+cls
+goto MENU
+
+:VIEWMAPS
+cls
+echo ************ MAPS GENERATED (PATH: "%CURRENTDIR%\MAPS\") ************
+echo.
+dir /B "%CURRENTDIR%\MAPS\"
+echo.
+echo ************ MAPS GENERATED (PATH: "%CURRENTDIR%\MAPS\") ************
+echo.
+echo.
+echo.
+pause
+cls
+goto MENU
+
+:END
