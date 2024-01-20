@@ -16,7 +16,7 @@ for /f "tokens=1-8 delims=.:/ " %%a in ("%date% %time%") do set DateNtime=%%a-%%
 SET CURRENTDIR=%cd%
 SET LOGFILE=%CURRENTDIR%\LogFile_%DateNtime%.log
 SET LOGFILE2=%CURRENTDIR%\LogFile2_%DateNtime%.log
-REM -------- @rmdir /S /Q "%CURRENTDIR%\server" >nul
+@rmdir /S /Q "%CURRENTDIR%\server" >nul
 
 IF NOT exist "%CURRENTDIR%\MAPS" ( @mkdir "%CURRENTDIR%\MAPS" >nul )
 IF NOT exist "%CURRENTDIR%\server" ( @mkdir "%CURRENTDIR%\server" >nul )
