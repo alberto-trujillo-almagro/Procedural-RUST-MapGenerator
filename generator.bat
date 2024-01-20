@@ -38,7 +38,7 @@ echo                                   *   4. View Map Prefabs and config       
 echo                                   *   5. View Maps generated                             *
 echo                                   *   6. Exit                                            *
 echo                                   ********************************************************
-echo.                                           [MapSize: %MAPSIZE% - WorldSeed: %RANDOMSEED%]
+echo.                                           [MapSize: %MAPSIZE% - MapSeed: %RANDOMSEED%]
 echo.
 CHOICE /C 123456 /N /M "Select Option (1,2,3,4,5,6):"
 echo.
