@@ -116,7 +116,7 @@ goto END
 cls
 echo.
 echo *************************************** myConfig.txt **********************************
-type %CURRENTDIR%\myConfig.txt
+type "%CURRENTDIR%\myConfig.txt"
 echo *************************************** myConfig.txt **********************************
 pause
 cls
