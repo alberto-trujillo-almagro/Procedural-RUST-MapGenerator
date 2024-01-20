@@ -88,6 +88,7 @@ IF EXIST server\world_%RANDOMSEED%\*.map (
     dir server\world_%RANDOMSEED%\*.map
     copy /Y server\world_%RANDOMSEED%\*.map "%CURRENTDIR%\MAPS\"
     "%CURRENTDIR%\rcon.exe" -a 127.0.0.1:28016 -t web -p 1 world.rendermap 2>nul
+    timeout /t 20 /nobreak >nul
     IF EXIST map_%MAPSIZE%_%RANDOMSEED%.png (
        copy /Y map_%MAPSIZE%_%RANDOMSEED%.png "%CURRENTDIR%\MAPS\"
        rename "%CURRENTDIR%\MAPS\map_%MAPSIZE%_%RANDOMSEED%.png" proceduralmap.%MAPSIZE%.%RANDOMSEED%.png
