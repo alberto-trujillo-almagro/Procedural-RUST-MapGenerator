@@ -60,7 +60,7 @@ cls
 goto MENU
 
 :MAPSIZE
-set /P MAPSIZE=Input MapSize [1500-6000]:
+set /P MAPSIZE=Input MapSize [1000-6000]:
 IF %MAPSIZE% LSS 1000 (
 echo MAPSIZE must be between 1000 and 6000.
 goto MAPSIZE
